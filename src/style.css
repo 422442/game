@@ -1,0 +1,738 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Space+Grotesk:wght@300;400;500;700&display=swap');
+
+:root {
+  --primary: #38bdf8;
+  --primary-glow: rgba(56, 189, 248, 0.45);
+  --accent: #22d3ee;
+  --success: #34d399;
+  --danger: #ef4444;
+  --purple: #a855f7;
+  --bg-hud: rgba(6, 15, 28, 0.72);
+  --hud-border: rgba(56, 189, 248, 0.28);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #020710;
+  color: #e2e8f0;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+#scene {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  z-index: 1;
+  cursor: crosshair;
+}
+
+#hud-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ------------------- HUD TOP BAR ------------------- */
+.hud-top {
+  position: absolute;
+  top: 1.2rem;
+  left: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.hud-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  background: var(--bg-hud);
+  backdrop-filter: blur(12px);
+  padding: 0.45rem 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--hud-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.hud-logo-icon {
+  color: var(--primary);
+  font-size: 1.1rem;
+  text-shadow: 0 0 10px var(--primary);
+}
+
+.hud-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  color: #ffffff;
+  text-shadow: 0 0 14px var(--primary-glow);
+}
+
+.hud-subtitle {
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  opacity: 0.7;
+  color: var(--accent);
+}
+
+.hud-zone-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--bg-hud);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--hud-border);
+  border-radius: 30px;
+  padding: 0.5rem 1.4rem;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: #ffffff;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
+}
+
+.zone-icon {
+  color: var(--primary);
+  animation: pulse-glow 2s infinite ease-in-out;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.5; filter: drop-shadow(0 0 2px var(--primary)); }
+  50% { opacity: 1.0; filter: drop-shadow(0 0 8px var(--primary)); }
+}
+
+.hud-relics-tray {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--bg-hud);
+  backdrop-filter: blur(12px);
+  padding: 0.45rem 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--hud-border);
+}
+
+.relics-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: #94a3b8;
+}
+
+.relic-slots {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.relic-slot {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.18);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.relic-slot.collected {
+  color: var(--primary);
+  text-shadow: 0 0 12px var(--primary);
+  transform: scale(1.15);
+}
+
+.hud-actions {
+  display: flex;
+  gap: 0.5rem;
+  pointer-events: auto;
+}
+
+.hud-btn {
+  background: var(--bg-hud);
+  border: 1px solid var(--hud-border);
+  color: #e2e8f0;
+  padding: 0.45rem 0.85rem;
+  border-radius: 6px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.hud-btn:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 0 12px var(--primary-glow);
+}
+
+/* ------------------- HUD CENTER & RETICLE ------------------- */
+.hud-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 280px;
+  height: 280px;
+  pointer-events: none;
+}
+
+.hud-horizon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 220px;
+  height: 220px;
+  transform: translate(-50%, -50%);
+  transition: transform 0.08s linear;
+}
+
+.horizon-line {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.45) 30%, rgba(56, 189, 248, 0.45) 70%, transparent);
+}
+
+.pitch-ladder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.55rem;
+  color: rgba(56, 189, 248, 0.45);
+}
+
+.pitch-rung {
+  border-bottom: 1px dashed rgba(56, 189, 248, 0.3);
+  padding: 0 10px;
+}
+
+.hud-reticle {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reticle-outer {
+  width: 72px;
+  height: 72px;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 50%;
+}
+
+.reticle-cross {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-left: 2px solid var(--primary);
+  border-right: 2px solid var(--primary);
+  border-top: 2px solid var(--primary);
+  border-bottom: 2px solid var(--primary);
+}
+
+.reticle-pip {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--primary);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--primary);
+}
+
+.reticle-telemetry {
+  position: absolute;
+  bottom: 20px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  color: rgba(56, 189, 248, 0.6);
+}
+
+/* ------------------- LEFT INSTRUMENTS PANEL ------------------- */
+.hud-left-panel {
+  position: absolute;
+  left: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.instrument-box {
+  background: var(--bg-hud);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--hud-border);
+  padding: 0.75rem 0.95rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.inst-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.15em;
+  color: #94a3b8;
+  margin-bottom: 0.4rem;
+}
+
+.inst-bar-bg {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.4rem;
+}
+
+.inst-bar-fill {
+  height: 100%;
+  transition: width 0.15s ease-out;
+}
+
+.hull-fill {
+  background: linear-gradient(90deg, #10b981, #06b6d4, #38bdf8);
+}
+
+.hull-fill.critical {
+  background: #ef4444 !important;
+  animation: flash-critical 0.6s infinite alternate;
+}
+
+@keyframes flash-critical {
+  from { opacity: 0.5; }
+  to { opacity: 1.0; }
+}
+
+.shield-fill {
+  background: linear-gradient(90deg, #6366f1, #8b5cf6, #38bdf8);
+}
+
+.inst-value {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: right;
+  color: #ffffff;
+}
+
+.telemetry-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+.tele-item {
+  background: var(--bg-hud);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--hud-border);
+  padding: 0.55rem 0.75rem;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tele-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.55rem;
+  color: #94a3b8;
+  letter-spacing: 0.1em;
+}
+
+.tele-val {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0.15rem 0;
+}
+
+.tele-unit {
+  font-size: 0.55rem;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+
+/* ------------------- RIGHT TACTICAL RADAR PANEL ------------------- */
+.hud-right-panel {
+  position: absolute;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.radar-box {
+  background: var(--bg-hud);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--hud-border);
+  padding: 0.85rem;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.radar-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.58rem;
+  color: #94a3b8;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.6rem;
+}
+
+.radar-canvas-wrap {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: radial-gradient(circle, rgba(6, 30, 50, 0.9) 0%, rgba(2, 10, 20, 0.95) 100%);
+  border: 1px solid var(--primary-glow);
+}
+
+#hud-radar {
+  width: 100%;
+  height: 100%;
+}
+
+.radar-sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0deg, rgba(56, 189, 248, 0.28) 45deg, transparent 46deg);
+  animation: radar-spin 3s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes radar-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.tactical-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: auto;
+}
+
+.tactical-btn {
+  background: var(--bg-hud);
+  border: 1px solid var(--hud-border);
+  color: #e2e8f0;
+  padding: 0.6rem 0.9rem;
+  border-radius: 6px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.tactical-btn:hover {
+  background: rgba(56, 189, 248, 0.22);
+  border-color: var(--primary);
+  box-shadow: 0 0 14px var(--primary-glow);
+  color: #ffffff;
+}
+
+.mission-brief {
+  background: var(--bg-hud);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--hud-border);
+  padding: 0.75rem 0.95rem;
+  border-radius: 8px;
+}
+
+.brief-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.58rem;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  margin-bottom: 0.35rem;
+}
+
+.brief-task {
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: #f1f5f9;
+  margin-bottom: 0.5rem;
+}
+
+.brief-stats {
+  font-size: 0.65rem;
+  color: #94a3b8;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.brief-stats strong {
+  color: var(--primary);
+  font-family: 'Orbitron', sans-serif;
+}
+
+/* ------------------- BOTTOM PROGRESS TRACKER ------------------- */
+.hud-bottom {
+  position: absolute;
+  bottom: 1.2rem;
+  left: 2rem;
+  right: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.depth-ruler {
+  position: relative;
+  width: 100%;
+  height: 24px;
+  background: rgba(6, 15, 28, 0.75);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--hud-border);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.zone-tick {
+  position: absolute;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.58rem;
+  color: rgba(255, 255, 255, 0.5);
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.depth-marker {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: left 0.1s linear;
+}
+
+.sub-icon-marker {
+  color: var(--primary);
+  font-size: 0.75rem;
+  text-shadow: 0 0 8px var(--primary);
+}
+
+.quick-hints {
+  text-align: center;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  color: rgba(226, 232, 240, 0.55);
+}
+
+/* ------------------- MODALS ------------------- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 14, 0.85);
+  backdrop-filter: blur(16px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+.modal-card {
+  width: min(640px, 92vw);
+  background: #091322;
+  border: 1px solid var(--primary);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 0 50px rgba(56, 189, 248, 0.25);
+  color: #f1f5f9;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.4rem;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+  padding-bottom: 0.8rem;
+}
+
+.modal-header h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.25rem;
+  letter-spacing: 0.15em;
+  color: #ffffff;
+  text-shadow: 0 0 12px var(--primary-glow);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: #ffffff;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.control-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+.control-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+}
+
+.control-row kbd {
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.72rem;
+}
+
+.lore-box {
+  background: rgba(56, 189, 248, 0.08);
+  border-left: 3px solid var(--primary);
+  padding: 0.8rem 1rem;
+  border-radius: 0 6px 6px 0;
+}
+
+.lore-box h3 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.78rem;
+  color: var(--primary);
+  letter-spacing: 0.12em;
+  margin-bottom: 0.4rem;
+}
+
+.lore-box p {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: #cbd5e1;
+}
+
+.modal-footer {
+  margin-top: 1.6rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #0284c7, #38bdf8);
+  border: none;
+  color: #ffffff;
+  padding: 0.75rem 1.6rem;
+  border-radius: 6px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(56, 189, 248, 0.7);
+}
+
+.victory-card {
+  text-align: center;
+  border-color: #34d399;
+  box-shadow: 0 0 60px rgba(52, 211, 153, 0.35);
+}
+
+.victory-icon {
+  font-size: 2.2rem;
+  color: #34d399;
+  text-shadow: 0 0 20px #34d399;
+  margin-bottom: 0.8rem;
+}
+
+.victory-message {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #e2e8f0;
+  margin-bottom: 1.2rem;
+}
+
+.stats-summary {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.stats-summary strong {
+  color: #34d399;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.danger-card {
+  border-color: var(--danger);
+  box-shadow: 0 0 50px rgba(239, 68, 68, 0.4);
+  text-align: center;
+}
+
+.danger-btn {
+  background: linear-gradient(135deg, #b91c1c, #ef4444) !important;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.5) !important;
+}
